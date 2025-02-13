@@ -1,15 +1,23 @@
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function ReturnPage() {
   return (
-    <div className="container max-w-2xl py-8">
+    <div className="container max-w-2xl py-8 justify-self-center">
       <Card>
         <CardHeader>
           <CardTitle>Return a Book</CardTitle>
-          <CardDescription>Enter the book details to process your return.</CardDescription>
+          <CardDescription>
+            Enter the book details to process your return.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form className="space-y-4">
@@ -19,7 +27,11 @@ export default function ReturnPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="condition">Book Condition</Label>
-              <select id="condition" className="w-full h-10 px-3 rounded-md border border-input bg-background" required>
+              <select
+                id="condition"
+                className="w-full h-10 px-3 rounded-md border border-input bg-background"
+                required
+              >
                 <option value="">Select condition</option>
                 <option value="excellent">Excellent</option>
                 <option value="good">Good</option>
@@ -34,6 +46,5 @@ export default function ReturnPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
-

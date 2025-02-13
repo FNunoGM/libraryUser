@@ -1,23 +1,32 @@
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { books, categories } from "@/lib/books"
-import Link from "next/link"
-import { BookCover } from "@/components/book-cover"
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { books, categories } from "@/lib/books";
+import Link from "next/link";
+import { BookCover } from "@/components/book-cover";
 
 export default function ExplorePage() {
   return (
-    <div className="container py-8">
+    <div className="container py-8 justify-self-center">
       <h1 className="text-3xl font-bold mb-8">Explore Our Collection</h1>
 
       <div className="grid gap-6 md:grid-cols-2">
         <section>
           <h2 className="text-xl font-semibold mb-4">Categories</h2>
           <div className="grid gap-4 sm:grid-cols-2">
-            {categories.map((category) => (
+            {categories.map(category => (
               <Card key={category}>
                 <CardHeader className="p-4">
                   <CardTitle className="text-lg">{category}</CardTitle>
-                  <CardDescription>{books.filter((book) => book.category === category).length} books</CardDescription>
+                  <CardDescription>
+                    {books.filter(book => book.category === category).length}{" "}
+                    books
+                  </CardDescription>
                 </CardHeader>
               </Card>
             ))}
@@ -27,7 +36,7 @@ export default function ExplorePage() {
         <section>
           <h2 className="text-xl font-semibold mb-4">Featured Books</h2>
           <div className="space-y-4">
-            {books.slice(0, 5).map((book) => (
+            {books.slice(0, 5).map(book => (
               <Card key={book.id}>
                 <CardContent className="flex items-center p-4">
                   <div className="w-16 h-24 mr-4">
@@ -39,8 +48,13 @@ export default function ExplorePage() {
                       by {book.author} • {book.category}
                     </p>
                   </div>
-                  <Button variant={book.available ? "default" : "secondary"} asChild>
-                    <Link href={`/books/${book.id}`}>{book.available ? "View Details" : "Join Waitlist"}</Link>
+                  <Button
+                    variant={book.available ? "default" : "secondary"}
+                    asChild
+                  >
+                    <Link href={`/books/${book.id}`}>
+                      {book.available ? "View Details" : "Join Waitlist"}
+                    </Link>
                   </Button>
                 </CardContent>
               </Card>
@@ -49,6 +63,5 @@ export default function ExplorePage() {
         </section>
       </div>
     </div>
-  )
+  );
 }
-

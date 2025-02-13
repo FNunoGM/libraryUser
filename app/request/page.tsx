@@ -1,12 +1,18 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { toast } from "sonner"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
 
 export default function RequestPage() {
   const [formData, setFormData] = useState({
@@ -14,26 +20,32 @@ export default function RequestPage() {
     author: "",
     isbn: "",
     reason: "",
-  })
+  });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log("Book request submitted:", formData)
-    toast.success("Your book request has been submitted. We'll review it shortly.")
-    setFormData({ title: "", author: "", isbn: "", reason: "" })
-  }
+    e.preventDefault();
+    console.log("Book request submitted:", formData);
+    toast.success(
+      "Your book request has been submitted. We'll review it shortly."
+    );
+    setFormData({ title: "", author: "", isbn: "", reason: "" });
+  };
 
   return (
-    <div className="container max-w-2xl py-8">
+    <div className="container max-w-2xl py-8 justify-self-center">
       <Card>
         <CardHeader>
           <CardTitle>Request a Book</CardTitle>
-          <CardDescription>Fill out this form to request a book that is not in our library.</CardDescription>
+          <CardDescription>
+            Fill out this form to request a book that is not in our library.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -61,7 +73,13 @@ export default function RequestPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="isbn">ISBN (if known)</Label>
-              <Input id="isbn" name="isbn" value={formData.isbn} onChange={handleChange} placeholder="Enter ISBN" />
+              <Input
+                id="isbn"
+                name="isbn"
+                value={formData.isbn}
+                onChange={handleChange}
+                placeholder="Enter ISBN"
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="reason">Reason for Request</Label>
@@ -81,6 +99,5 @@ export default function RequestPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
-
