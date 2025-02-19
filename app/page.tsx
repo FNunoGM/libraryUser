@@ -1,4 +1,33 @@
-import Link from "next/link";
+"use client";
+
+import { useEffect, useState } from "react";
+
+export default function TestAPI() {
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetch("http://localhost:5000/ping")
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("Failed to connect");
+        }
+        return response.text();
+      })
+      .then(data => setMessage(data))
+      .catch(err => setError(err.message));
+  }, []);
+
+  return (
+    <div>
+      <h1>Test API Connection</h1>
+      {error && <p style={{ color: "red" }}>Error: {error}</p>}
+      {message && <p>API Response: {message}</p>}
+    </div>
+  );
+}
+
+/*import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { books } from "@/lib/books";
 import { BookCover } from "@/components/book-cover";
@@ -111,3 +140,4 @@ export default function HomePage() {
     </div>
   );
 }
+*/
