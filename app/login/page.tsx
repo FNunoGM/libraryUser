@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { loginUser } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,26 +14,54 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import { useAuth } from "@/components/auth-context";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { login } = useAuth();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const validateEmail = (email: string) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, you'd validate credentials against a backend
-    if (email && password) {
-      login(email);
-      toast.success("Logged in successfully");
-      router.push("/");
-    } else {
+
+    if (!email || !password) {
       toast.error("Please enter both email and password");
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = await loginUser(email, password);
+      if (response?.userId) {
+        login(email, response.userId);
+        toast.success("Logged in successfully");
+        router.push("/");
+      } else {
+        toast.error("Invalid email or password");
+      }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Login failed.";
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
+
   return (
     <div className="container flex h-screen w-screen flex-col items-center justify-center justify-self-center">
       <Card className="w-full max-w-sm">
@@ -65,8 +94,8 @@ export default function LoginPage() {
                 onChange={e => setPassword(e.target.value)}
               />
             </div>
-            <Button type="submit" className="w-full">
-              Sign In
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Logging in..." : "Sign In"}
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
