@@ -27,11 +27,11 @@ export default function SignUpPage() {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleChange = e => {
+  const handleChange = (e: { target: { id: any; value: any } }) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -68,7 +68,7 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="container flex h-screen w-screen flex-col items-center justify-center">
+    <div className="container flex h-screen w-screen flex-col items-center justify-center justify-self-center">
       <Card className="w-full max-w-sm">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl text-center">

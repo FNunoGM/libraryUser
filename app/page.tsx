@@ -31,7 +31,7 @@ export default function HomePage() {
                 variant="outline"
                 className="border-white text-white hover:bg-white hover:text-black"
               >
-                <Link href="/request">Request a Book</Link>
+                <Link href="/search">Search Books</Link>
               </Button>
             </div>
           </div>

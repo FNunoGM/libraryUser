@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -11,9 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Search } from "lucide-react";
-import { books, categories } from "@/lib/books";
-import Link from "next/link";
-import { BookCover } from "@/components/book-cover";
+import { toast } from "react-toastify";
 import {
   Select,
   SelectContent,
@@ -21,23 +19,43 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { BookCover } from "@/components/book-cover";
+import { Book } from "@/lib/types";
+import { fetchBooks } from "@/lib/api";
 
 export default function SearchPage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [searchResults, setSearchResults] = useState(books);
+  const [selectedSubject, setSelectedSubject] = useState("");
+  const [books, setBooks] = useState<Book[]>([]);
+  const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
+
+  // Extract unique subjects from all books
+  const subjects = Array.from(
+    new Set(books.flatMap(book => book.subjectNames))
+  );
+
+  useEffect(() => {
+    // Fetch books when the component mounts
+    const loadBooks = async () => {
+      try {
+        const data = await fetchBooks();
+        setBooks(data);
+        setFilteredBooks(data); // Initialize filtered books with all books
+      } catch (error) {
+        toast.error("Failed to load books.");
+      }
+    };
+    loadBooks();
+  }, []);
 
   const handleSearch = () => {
     const results = books.filter(
       book =>
         (book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          book.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          book.isbn.includes(searchQuery)) &&
-        (selectedCategory === "" ||
-          book.category === selectedCategory ||
-          !selectedCategory)
+          book.authorName.toLowerCase().includes(searchQuery.toLowerCase())) &&
+        (selectedSubject === "" || book.subjectNames.includes(selectedSubject))
     );
-    setSearchResults(results);
+    setFilteredBooks(results);
   };
 
   return (
@@ -46,20 +64,20 @@ export default function SearchPage() {
         <h1 className="text-2xl font-bold mb-4">Search Books</h1>
         <div className="flex w-full max-w-2xl gap-2 mb-4">
           <Input
-            placeholder="Search by title, author, or ISBN..."
+            placeholder="Search by title or author..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             className="flex-1"
           />
-          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+          <Select value={selectedSubject} onValueChange={setSelectedSubject}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Category" />
+              <SelectValue placeholder="Subject" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
-              {categories.map(category => (
-                <SelectItem key={category} value={category}>
-                  {category}
+              <SelectItem value="all">All Subjects</SelectItem>
+              {subjects.map(subject => (
+                <SelectItem key={subject} value={subject}>
+                  {subject}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -72,25 +90,21 @@ export default function SearchPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {searchResults.map(book => (
-          <Card key={book.id}>
+        {filteredBooks.map(book => (
+          <Card key={book.bookId}>
             <CardHeader>
               <div className="w-full aspect-[2/3] mb-4">
                 <BookCover src={book.coverImage} alt={book.title} />
               </div>
               <CardTitle>{book.title}</CardTitle>
-              <CardDescription>By {book.author}</CardDescription>
+              <CardDescription>By {book.authorName}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">
-                ISBN: {book.isbn}
-                <br />
-                Category: {book.category}
-                <br />
-                Status: {book.available ? "Available" : "Not Available"}
+                Subjects: {book.subjectNames.join(", ")}
               </p>
               <Button className="w-full" asChild>
-                <Link href={`/books/${book.id}`}>View Details</Link>
+                <a href={`/books/${book.bookId}`}>View Details</a>
               </Button>
             </CardContent>
           </Card>

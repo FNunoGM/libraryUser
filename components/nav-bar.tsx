@@ -29,16 +29,16 @@ export function NavBar() {
           {isLoggedIn && (
             <>
               <Link
-                href="/request"
-                className="transition-colors hover:text-white/80 text-white"
-              >
-                Request Book
-              </Link>
-              <Link
                 href="/return"
                 className="transition-colors hover:text-white/80 text-white"
               >
                 Return Book
+              </Link>
+              <Link
+                href="/request"
+                className="transition-colors hover:text-white/80 text-white"
+              >
+                Account
               </Link>
             </>
           )}

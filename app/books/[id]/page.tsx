@@ -3,20 +3,39 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { books } from "@/lib/books";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { BookOpen, User, Calendar, BarChart } from "lucide-react";
 import { BookCover } from "@/components/book-cover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { RequestBookDto } from "@/lib/types";
+import { books } from "@/lib/books";
 
 export default function BookPage() {
   const { id } = useParams();
   const book = books.find(b => b.id === id);
   const [isAvailable, setIsAvailable] = useState(book?.available);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [quantity, setQuantity] = useState(1);
+  const [selectedLibrary, setSelectedLibrary] = useState("");
   const router = useRouter();
+
+  // Mock data for libraries
+  const libraries = [
+    { id: "1", name: "Main Library" },
+    { id: "2", name: "Downtown Library" },
+    { id: "3", name: "Westside Library" },
+    { id: "4", name: "Eastside Library" },
+    { id: "5", name: "Northside Library" },
+  ];
 
   useEffect(() => {
     const user = localStorage.getItem("user");
@@ -27,25 +46,54 @@ export default function BookPage() {
     return <div className="container py-8">Book not found</div>;
   }
 
-  const handleBorrow = () => {
-    if (!isLoggedIn) {
-      toast.error("Please log in to borrow books");
-      router.push("/login");
-      return;
-    }
-    setIsAvailable(false);
-    toast.success(
-      `You have borrowed "${book.title}". Please return it within 14 days.`
-    );
+  const handleIncrement = () => {
+    setQuantity(prev => prev + 1);
   };
 
-  const handleWaitlist = () => {
+  const handleDecrement = () => {
+    setQuantity(prev => Math.max(prev - 1, 1));
+  };
+
+  const handleRequest = async () => {
     if (!isLoggedIn) {
-      toast.error("Please log in to join the waitlist");
+      toast.error("Please log in to request books");
       router.push("/login");
       return;
     }
-    toast.success(`You have been added to the waitlist for "${book.title}".`);
+
+    if (!selectedLibrary) {
+      toast.error("Please select a library");
+      return;
+    }
+
+    // Prepare the request payload
+    const request: RequestBookDto = {
+      userId: parseInt(localStorage.getItem("userId") || ""),
+      bookId: parseInt(book.id), // Convert book ID to number
+      libraryId: parseInt(selectedLibrary), // Convert library ID to number
+      numberOfCopies: quantity,
+    };
+
+    try {
+      // Call the backend API
+      const response = await fetch("/api/requestbook", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(request),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to request book.");
+      }
+
+      const data = await response.json();
+      toast.success(data.message || "Book requested successfully.");
+    } catch (error) {
+      console.error("Error requesting book:", error);
+      toast.error("Failed to request book. Please try again.");
+    }
   };
 
   return (
@@ -103,15 +151,36 @@ export default function BookPage() {
               </p>
             </CardContent>
           </Card>
-          {isAvailable ? (
-            <Button size="lg" onClick={handleBorrow}>
-              Borrow Now
+
+          {/* Request Section */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 justify-self-center">
+              <Button variant="outline" size="sm" onClick={handleDecrement}>
+                -
+              </Button>
+              <span>{quantity}</span>
+              <Button variant="outline" size="sm" onClick={handleIncrement}>
+                +
+              </Button>
+            </div>
+
+            <Select onValueChange={setSelectedLibrary}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select a library" />
+              </SelectTrigger>
+              <SelectContent>
+                {libraries.map(library => (
+                  <SelectItem key={library.id} value={library.id}>
+                    {library.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Button className="w-full" onClick={handleRequest}>
+              Request Book
             </Button>
-          ) : (
-            <Button size="lg" variant="secondary" onClick={handleWaitlist}>
-              Join Waitlist
-            </Button>
-          )}
+          </div>
         </div>
       </div>
     </div>

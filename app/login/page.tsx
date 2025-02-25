@@ -47,7 +47,7 @@ export default function LoginPage() {
     try {
       const response = await loginUser(email, password);
       if (response?.userId) {
-        login(email, response.userId);
+        login(email, response.userId.toString());
         toast.success("Logged in successfully");
         router.push("/");
       } else {
