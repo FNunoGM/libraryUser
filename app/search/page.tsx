@@ -53,7 +53,8 @@ export default function SearchPage() {
       book =>
         (book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
           book.authorName.toLowerCase().includes(searchQuery.toLowerCase())) &&
-        (selectedSubject === "" || book.subjectNames.includes(selectedSubject))
+        (selectedSubject === "all" ||
+          book.subjectNames.includes(selectedSubject))
     );
     setFilteredBooks(results);
   };
