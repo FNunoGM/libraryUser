@@ -16,6 +16,16 @@ export interface Book {
   subjectNames: string[]; // Array of subject names (categories)
 }
 
+export interface BookSearchResult {
+  bookId: number;
+  title: string;
+  quantity: number;
+  authorId: number;
+  authorName: string;
+  booksBookId?: number;
+  subjectNames: string[];
+}
+
 export interface User {
   id?: number;
   name: string;

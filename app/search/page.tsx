@@ -20,14 +20,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { BookCover } from "@/components/book-cover";
-import { Book } from "@/lib/types";
-import { fetchBooks } from "@/lib/api";
+import { BookSearchResult } from "@/lib/types";
+import { fetchBookSearch } from "@/lib/api";
 
 export default function SearchPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSubject, setSelectedSubject] = useState("");
-  const [books, setBooks] = useState<Book[]>([]);
-  const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
+  const [books, setBooks] = useState<BookSearchResult[]>([]);
+  const [filteredBooks, setFilteredBooks] = useState<BookSearchResult[]>([]);
 
   // Extract unique subjects from all books
   const subjects = Array.from(
@@ -38,7 +38,7 @@ export default function SearchPage() {
     // Fetch books when the component mounts
     const loadBooks = async () => {
       try {
-        const data = await fetchBooks();
+        const data = await fetchBookSearch();
         setBooks(data);
         setFilteredBooks(data); // Initialize filtered books with all books
       } catch (error) {
