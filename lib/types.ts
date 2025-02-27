@@ -12,8 +12,19 @@ export interface Book {
   email: string;
   contact: string;
   numberOfCopies: number;
+  coverImage: string;
+  subjectNames: string[];
+}
+
+export interface BookSearchResult {
+  bookId: number;
+  title: string;
+  quantity: number;
+  authorId: number;
+  authorName: string;
+  booksBookId?: number;
   coverImage: string; // Assuming the cover image is a URL or base64 string
-  subjectNames: string[]; // Array of subject names (categories)
+  subjectNames: string[];
 }
 
 export interface User {

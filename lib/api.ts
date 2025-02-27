@@ -1,10 +1,16 @@
-import { ApiResponse, Book, RequestBookDto, User } from "@/lib/types";
+import {
+  ApiResponse,
+  Book,
+  BookSearchResult,
+  RequestBookDto,
+  User,
+} from "@/lib/types";
 
-const API_BASE_URL = "http://localhost:5000/"; // URL da API
+const API_BASE_URL = "http://localhost:5000/api"; // URL da API
 
 export const fetchBooks = async (): Promise<Book[]> => {
   try {
-    const response = await fetch(`${API_BASE_URL}api/books`);
+    const response = await fetch(`${API_BASE_URL}/books`);
     if (!response.ok) {
       throw new Error("Failed to fetch books.");
     }
@@ -16,9 +22,26 @@ export const fetchBooks = async (): Promise<Book[]> => {
   }
 };
 
+export const fetchBookSearch = async (): Promise<BookSearchResult[]> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/books/getAll`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+    if (!response.ok) {
+      throw new Error("Failed to fetch books.");
+    }
+    const data: BookSearchResult[] = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching books:", error);
+    throw error;
+  }
+};
+
 export async function registerUser(userData: User): Promise<ApiResponse<User>> {
   try {
-    const response = await fetch(`${API_BASE_URL}api/user/register`, {
+    const response = await fetch(`${API_BASE_URL}/user/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(userData),
@@ -38,7 +61,7 @@ export async function loginUser(
   password: string
 ): Promise<ApiResponse<User>> {
   try {
-    const response = await fetch(`${API_BASE_URL}api/user/login`, {
+    const response = await fetch(`${API_BASE_URL}/user/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -59,7 +82,7 @@ export async function requestBook(
   request: RequestBookDto
 ): Promise<ApiResponse<{ requestId: number }>> {
   try {
-    const response = await fetch(`${API_BASE_URL}api/requestbook`, {
+    const response = await fetch(`${API_BASE_URL}/requestbook`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(request),

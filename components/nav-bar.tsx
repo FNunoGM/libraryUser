@@ -29,13 +29,7 @@ export function NavBar() {
           {isLoggedIn && (
             <>
               <Link
-                href="/return"
-                className="transition-colors hover:text-white/80 text-white"
-              >
-                Return Book
-              </Link>
-              <Link
-                href="/request"
+                href="/account"
                 className="transition-colors hover:text-white/80 text-white"
               >
                 Account
