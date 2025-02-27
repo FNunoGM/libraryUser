@@ -15,12 +15,18 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { differenceInDays, format, parseISO } from "date-fns";
+import { differenceInDays } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { AlertTriangle, AlertCircle, Clock } from "lucide-react";
-import { mockBorrowedBooks } from "./mockData";
 import { toast } from "react-toastify";
+import { UserOrder } from "@/lib/types";
+import { useEffect } from "react";
 
-export function CurrentBooksTab() {
+interface CurrentBooksTabProps {
+  orders: UserOrder[];
+}
+
+export function CurrentBooksTab({ orders }: CurrentBooksTabProps) {
   const getReturnStatus = (dueDate: string) => {
     const today = new Date();
     const due = parseISO(dueDate);
@@ -49,6 +55,10 @@ export function CurrentBooksTab() {
     }
   };
 
+  useEffect(() => {
+    console.log("CurrentBooksTab updated orders:", orders);
+  }, [orders]);
+
   return (
     <Card>
       <CardHeader>
@@ -59,7 +69,7 @@ export function CurrentBooksTab() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {mockBorrowedBooks.length === 0 ? (
+        {orders.length === 0 ? (
           <p className="text-center py-8 text-muted-foreground">
             You don't have any books currently borrowed.
           </p>
@@ -69,7 +79,7 @@ export function CurrentBooksTab() {
               <TableRow>
                 <TableHead>Title</TableHead>
                 <TableHead>Author</TableHead>
-                <TableHead>Branch</TableHead>
+                <TableHead>Library</TableHead>
                 <TableHead>Borrow Date</TableHead>
                 <TableHead>Due Date</TableHead>
                 <TableHead>Status</TableHead>
@@ -77,18 +87,20 @@ export function CurrentBooksTab() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {mockBorrowedBooks.map(book => {
-                const status = getReturnStatus(book.dueDate);
+              {orders.map(order => {
+                const status = getReturnStatus(
+                  format(order.returnDate, "yyyy-MM-dd")
+                );
                 return (
-                  <TableRow key={book.id}>
-                    <TableCell className="font-medium">{book.title}</TableCell>
-                    <TableCell>{book.author}</TableCell>
-                    <TableCell>{book.branch}</TableCell>
+                  <TableRow key={order.orderId}>
+                    <TableCell className="font-medium">{order.title}</TableCell>
+                    <TableCell>{order.authorName}</TableCell>
+                    <TableCell>{order.libraryName}</TableCell>
                     <TableCell>
-                      {format(parseISO(book.borrowDate), "MMM d, yyyy")}
+                      {format(order.orderDate, "yyyy-MM-dd")}
                     </TableCell>
                     <TableCell>
-                      {format(parseISO(book.dueDate), "MMM d, yyyy")}
+                      {format(order.returnDate, "yyyy-MM-dd")}
                     </TableCell>
                     <TableCell>
                       <Badge
@@ -105,7 +117,7 @@ export function CurrentBooksTab() {
                         size="sm"
                         onClick={() =>
                           toast.success(
-                            `Return process initiated for "${book.title}"`
+                            `Return process initiated for "${order.title}"`
                           )
                         }
                       >

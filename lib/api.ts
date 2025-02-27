@@ -4,7 +4,9 @@ import {
   BookSearchResult,
   RequestBookDto,
   User,
+  UserOrder,
 } from "@/lib/types";
+import { List } from "postcss/lib/list";
 
 const API_BASE_URL = "http://localhost:5000/api"; // URL da API
 
@@ -15,23 +17,6 @@ export const fetchBooks = async (): Promise<Book[]> => {
       throw new Error("Failed to fetch books.");
     }
     const data: Book[] = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching books:", error);
-    throw error;
-  }
-};
-
-export const fetchBookSearch = async (): Promise<BookSearchResult[]> => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/books/getAll`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    });
-    if (!response.ok) {
-      throw new Error("Failed to fetch books.");
-    }
-    const data: BookSearchResult[] = await response.json();
     return data;
   } catch (error) {
     console.error("Error fetching books:", error);
@@ -94,6 +79,40 @@ export async function requestBook(
     return data;
   } catch (error: any) {
     console.error("Error requesting book:", error);
+    throw error;
+  }
+}
+
+export const fetchBookSearch = async (): Promise<BookSearchResult[]> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/books/getAll`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+    if (!response.ok) {
+      throw new Error("Failed to fetch books.");
+    }
+    const data: BookSearchResult[] = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching books:", error);
+    throw error;
+  }
+};
+
+export async function getUserOrders(userId: number): Promise<UserOrder[]> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/orders?userId=${userId}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    if (!response.ok) throw new Error("Failed to get user orders.");
+
+    const data: UserOrder[] = await response.json();
+    return data;
+  } catch (error: any) {
+    console.error("Error getting user orders:", error);
     throw error;
   }
 }
