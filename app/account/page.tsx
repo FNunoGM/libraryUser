@@ -25,7 +25,7 @@ export default function AccountPage() {
   }
 
   return (
-    <div className="container py-8">
+    <div className="container py-8 justify-self-center">
       <h1 className="text-3xl font-bold mb-6">My Account</h1>
 
       <Tabs defaultValue="current-books" className="w-full">
