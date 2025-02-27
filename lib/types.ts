@@ -47,3 +47,14 @@ export interface ApiResponse<T> {
   data?: T;
   error?: string;
 }
+
+export interface Order {
+  orderId?: number;
+  userId: number;
+  libraryId: number;
+  bookId: number;
+  stateId: number;
+  requestedCopiesQTY: number;
+  orderDate: Date;
+  returnDate?: Date;
+}

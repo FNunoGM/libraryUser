@@ -4,6 +4,7 @@ import {
   BookSearchResult,
   RequestBookDto,
   User,
+  Order
 } from "@/lib/types";
 
 const API_BASE_URL = "http://localhost:5000/api"; // URL da API
@@ -94,6 +95,23 @@ export async function requestBook(
     return data;
   } catch (error: any) {
     console.error("Error requesting book:", error);
+    throw error;
+  }
+}
+
+export const getOrdersByUserId = async (userId: number): Promise<Order[]> => {
+  try{
+    const response = await fetch(`${API_BASE_URL}/orders`);
+    if (!response.ok) {
+      throw Error("Failed to fetch orders.");
+    }
+
+    const data: Order[] = await response.json();
+
+    return data;
+  }
+  catch (error) {
+    console.error("Error fetching orders: ", error);
     throw error;
   }
 }
