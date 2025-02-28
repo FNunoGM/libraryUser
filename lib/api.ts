@@ -99,14 +99,21 @@ export async function requestBook(
   }
 }
 
-export const getOrdersByUserId = async (userId: number): Promise<Order[]> => {
+export const getOrdersByUserId = async (
+  userId: number
+): Promise<ApiResponse<{orders: Order[]}>> => {
   try{
-    const response = await fetch(`${API_BASE_URL}/orders`);
+    const response = await fetch(`${API_BASE_URL}/orders`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(userId),
+    });
+
     if (!response.ok) {
       throw Error("Failed to fetch orders.");
     }
 
-    const data: Order[] = await response.json();
+    const data: ApiResponse<{orders: Order[]}> = await response.json();
 
     return data;
   }
