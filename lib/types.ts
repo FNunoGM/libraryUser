@@ -1,19 +1,17 @@
-export interface Book {
+export interface ApiResponse<T> {
+  json(): unknown;
+  ok: any;
+  userId: number;
+  message?: string;
+  data?: T;
+  error?: string;
+}
+
+export interface RequestBookDto {
+  userId: number;
   bookId: number;
-  title: string;
-  edition: string;
-  year: number;
-  quantity: number;
-  authorId: number;
-  authorName: string;
   libraryId: number;
-  libraryName: string;
-  libraryAddress: string;
-  email: string;
-  contact: string;
   numberOfCopies: number;
-  coverImage: string;
-  subjectNames: string[];
 }
 
 export interface BookSearchResult {
@@ -22,7 +20,6 @@ export interface BookSearchResult {
   quantity: number;
   authorId: number;
   authorName: string;
-  booksBookId?: number;
   coverImage: string; // Assuming the cover image is a URL or base64 string
   subjectNames: string[];
 }
@@ -34,20 +31,6 @@ export interface User {
   password?: string; // Exclude when fetching user data
 }
 
-export interface RequestBookDto {
-  userId: number;
-  bookId: number;
-  libraryId: number;
-  numberOfCopies: number;
-}
-
-export interface ApiResponse<T> {
-  userId: number;
-  message?: string;
-  data?: T;
-  error?: string;
-}
-
 export interface UserOrder {
   orderId: number;
   title: string;
@@ -56,4 +39,20 @@ export interface UserOrder {
   orderDate: Date;
   returnDate: Date;
   stateName: string;
+}
+
+export interface BookDetailsDTO {
+  bookId: number;
+  title: string;
+  edition: string;
+  year: number;
+  coverImage: string;
+  authorName: string;
+  subjectNames: string[];
+}
+
+export interface LibraryByNumberOfCopies {
+  libraryId: number;
+  libraryName: string;
+  numberOfCopies: number;
 }

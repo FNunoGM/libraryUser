@@ -20,7 +20,6 @@ import { format, parseISO } from "date-fns";
 import { AlertTriangle, AlertCircle, Clock } from "lucide-react";
 import { toast } from "react-toastify";
 import { UserOrder } from "@/lib/types";
-import { useEffect } from "react";
 
 interface CurrentBooksTabProps {
   orders: UserOrder[];
@@ -54,10 +53,6 @@ export function CurrentBooksTab({ orders }: CurrentBooksTabProps) {
       return { status: `${daysLeft} days left`, color: "default", icon: null };
     }
   };
-
-  useEffect(() => {
-    console.log("CurrentBooksTab updated orders:", orders);
-  }, [orders]);
 
   return (
     <Card>
