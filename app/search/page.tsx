@@ -105,7 +105,14 @@ export default function SearchPage() {
                 Subjects: {book.subjectNames.join(", ")}
               </p>
               <Button className="w-full" asChild>
-                <a href={`/books/${book.bookId}`}>View Details</a>
+                <a
+                  href={`/books/${book.bookId}`}
+                  onClick={() =>
+                    console.log(`Navigating to book ID: ${book.bookId}`)
+                  }
+                >
+                  View Details
+                </a>
               </Button>
             </CardContent>
           </Card>

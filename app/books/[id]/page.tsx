@@ -5,9 +5,9 @@ import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { BookOpen, User, Calendar, BarChart } from "lucide-react";
+import { User, Calendar } from "lucide-react";
 import { BookCover } from "@/components/book-cover";
 import {
   Select,
@@ -17,25 +17,44 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { RequestBookDto } from "@/lib/types";
-import { books } from "@/lib/books";
+import {
+  getBookById,
+  getLibrariesByNumberOfCopies,
+  requestBook,
+} from "@/lib/api";
+import { BookDetailsDTO, LibraryByNumberOfCopies } from "@/lib/types";
 
 export default function BookPage() {
   const { id } = useParams();
-  const book = books.find(b => b.id === id);
-  const [isAvailable, setIsAvailable] = useState(book?.available);
+  const [book, setBook] = useState<BookDetailsDTO | null>(null);
+  const [libraries, setLibraries] = useState<LibraryByNumberOfCopies[]>([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [selectedLibrary, setSelectedLibrary] = useState("");
   const router = useRouter();
 
-  // Mock data for libraries
-  const libraries = [
-    { id: "1", name: "Main Library" },
-    { id: "2", name: "Downtown Library" },
-    { id: "3", name: "Westside Library" },
-    { id: "4", name: "Eastside Library" },
-    { id: "5", name: "Northside Library" },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const bookId = parseInt(id as string, 10);
+        if (isNaN(bookId)) {
+          throw new Error("Invalid book ID.");
+        }
+
+        // Fetch book details
+        const bookDetails = await getBookById(bookId);
+        setBook(bookDetails);
+
+        // Fetch libraries with available copies
+        const librariesData = await getLibrariesByNumberOfCopies(bookId);
+        setLibraries(librariesData);
+      } catch (error) {
+        toast.error("Failed to fetch libraries. Please try again.");
+      }
+    };
+
+    fetchData();
+  }, [id]);
 
   useEffect(() => {
     const user = localStorage.getItem("user");
@@ -43,11 +62,29 @@ export default function BookPage() {
   }, []);
 
   if (!book) {
-    return <div className="container py-8">Book not found</div>;
+    return <div className="container py-8">Loading...</div>;
   }
 
   const handleIncrement = () => {
-    setQuantity(prev => prev + 1);
+    if (selectedLibrary) {
+      const selectedLibraryData = libraries.find(
+        lib => lib.libraryId.toString() === selectedLibrary
+      );
+      if (
+        selectedLibraryData &&
+        quantity < selectedLibraryData.numberOfCopies - 1
+      ) {
+        setQuantity(prev => prev + 1);
+      } else {
+        toast.warning(
+          `You cannot request more than ${
+            selectedLibraryData ? selectedLibraryData.numberOfCopies - 1 : 0
+          } copies.`
+        );
+      }
+    } else {
+      toast.warning("Please select a library first.");
+    }
   };
 
   const handleDecrement = () => {
@@ -66,32 +103,44 @@ export default function BookPage() {
       return;
     }
 
-    // Prepare the request payload
-    const request: RequestBookDto = {
-      userId: parseInt(localStorage.getItem("userId") || ""),
-      bookId: parseInt(book.id), // Convert book ID to number
-      libraryId: parseInt(selectedLibrary), // Convert library ID to number
-      numberOfCopies: quantity,
-    };
+    // Retrieve userId from localStorage
+    const userData = localStorage.getItem("user");
+    if (!userData) {
+      toast.error("User data not found. Please log in again.");
+      return;
+    }
 
     try {
-      // Call the backend API
-      const response = await fetch("/api/requestbook", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(request),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to request book.");
+      const user = JSON.parse(userData);
+      const userId = user.userId; // Access userId from the parsed object
+      if (!userId) {
+        toast.error("User ID not found. Please log in again.");
+        return;
       }
 
-      const data = await response.json();
-      toast.success(data.message || "Book requested successfully.");
+      const parsedUserId = parseInt(userId, 10);
+      if (isNaN(parsedUserId)) {
+        toast.error("Invalid user ID. Please log in again.");
+        return;
+      }
+
+      // Prepare the request payload
+      const request: RequestBookDto = {
+        userId: parsedUserId, // Use the parsed userId
+        bookId: parseInt(book.bookId.toString(), 10), // Convert book ID to number
+        libraryId: parseInt(selectedLibrary, 10), // Convert library ID to number
+        numberOfCopies: quantity,
+      };
+
+      // Call the backend API
+      const response = await requestBook(request);
+
+      if (!response.ok) {
+        toast.success("Book requested successfully!");
+      }
+
+      toast.success("Book requested successfully!");
     } catch (error) {
-      console.error("Error requesting book:", error);
       toast.error("Failed to request book. Please try again.");
     }
   };
@@ -106,51 +155,30 @@ export default function BookPage() {
         </div>
         <div className="flex flex-col justify-center">
           <h1 className="text-4xl font-bold mb-2">{book.title}</h1>
-          <p className="text-xl text-muted-foreground mb-4">by {book.author}</p>
+          <p className="text-xl text-muted-foreground mb-4">
+            by {book.authorName}
+          </p>
           <div className="flex flex-wrap gap-2 mb-6">
-            <Badge variant="secondary">{book.category}</Badge>
-            <Badge variant={isAvailable ? "default" : "destructive"}>
-              {isAvailable ? "Available" : "Not Available"}
+            <Badge variant="secondary">{book.subjectNames.join(", ")}</Badge>
+            <Badge variant={libraries.length > 0 ? "default" : "destructive"}>
+              {libraries.length > 0 ? "Available" : "Not Available"}
             </Badge>
           </div>
           <Separator className="my-6" />
           <div className="grid gap-4 mb-6">
             <div className="flex items-center gap-2">
-              <BookOpen className="w-5 h-5 text-muted-foreground" />
-              <span>
-                <strong>ISBN:</strong> {book.isbn}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
               <User className="w-5 h-5 text-muted-foreground" />
               <span>
-                <strong>Author:</strong> {book.author}
+                <strong>Author:</strong> {book.authorName}
               </span>
             </div>
             <div className="flex items-center gap-2">
               <Calendar className="w-5 h-5 text-muted-foreground" />
               <span>
-                <strong>Publication Date:</strong> January 1, 2023
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <BarChart className="w-5 h-5 text-muted-foreground" />
-              <span>
-                <strong>Popularity:</strong> 4.5/5 (based on 100 reviews)
+                <strong>Publication Date:</strong> {book.year}
               </span>
             </div>
           </div>
-          <Card className="mb-6">
-            <CardContent className="pt-6">
-              <h3 className="text-lg font-semibold mb-2">Book Description</h3>
-              <p className="text-muted-foreground">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat.
-              </p>
-            </CardContent>
-          </Card>
 
           {/* Request Section */}
           <div className="space-y-4">
@@ -170,8 +198,11 @@ export default function BookPage() {
               </SelectTrigger>
               <SelectContent>
                 {libraries.map(library => (
-                  <SelectItem key={library.id} value={library.id}>
-                    {library.name}
+                  <SelectItem
+                    key={library.libraryId}
+                    value={library.libraryId.toString()}
+                  >
+                    {library.libraryName} ({library.numberOfCopies} copies)
                   </SelectItem>
                 ))}
               </SelectContent>
