@@ -18,13 +18,13 @@ export default function HomePage() {
               Your gateway to knowledge and imagination
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button
+              {/* <Button
                 asChild
                 size="lg"
                 className="bg-white text-black hover:bg-white/90"
               >
                 <Link href="/explore">Explore Books</Link>
-              </Button>
+              </Button> */}
               <Button
                 asChild
                 size="lg"
@@ -37,7 +37,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="w-full py-12 md:py-24 lg:py-32">
+        {/* <section className="w-full py-12 md:py-24 lg:py-32">
           <div className="container justify-self-center">
             <h2 className="text-3xl font-bold mb-8 text-center">
               Featured Books
@@ -63,7 +63,7 @@ export default function HomePage() {
               ))}
             </div>
           </div>
-        </section>
+        </section> */}
 
         <section className="w-full py-12 md:py-24 lg:py-32 bg-muted">
           <div className="container flex flex-col items-center justify-self-center">

@@ -20,14 +20,11 @@ import { format, parseISO } from "date-fns";
 import { AlertTriangle, AlertCircle, Clock } from "lucide-react";
 import { toast } from "react-toastify";
 import { UserOrder } from "@/lib/types";
-import { returnBook } from "@/lib/api";
+import { getUserOrders, returnBook } from "@/lib/api";
+import { useEffect, useState } from "react";
 
-interface CurrentBooksTabProps {
-  orders: UserOrder[];
-  setOrders: React.Dispatch<React.SetStateAction<UserOrder[]>>; // Add this prop to update state
-}
-
-export function CurrentBooksTab({ orders, setOrders }: CurrentBooksTabProps) {
+export function CurrentBooksTab() {
+  const [orders, setOrders] = useState<UserOrder[]>([]);
   const getReturnStatus = (dueDate: string) => {
     const today = new Date();
     const due = parseISO(dueDate);
@@ -55,6 +52,25 @@ export function CurrentBooksTab({ orders, setOrders }: CurrentBooksTabProps) {
       return { status: `${daysLeft} days left`, color: "default", icon: null };
     }
   };
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+    if (!user || !user.userId) return;
+
+    const loadOrders = async () => {
+      try {
+        const data = await getUserOrders(user.userId);
+        setOrders(data);
+      } catch (error) {
+        toast.error("Failed to load books.");
+      }
+    };
+
+    loadOrders();
+    return () => {
+      setOrders([]);
+    };
+  }, []);
 
   const handleReturnBook = async (orderId: number) => {
     try {
@@ -96,6 +112,7 @@ export function CurrentBooksTab({ orders, setOrders }: CurrentBooksTabProps) {
                 <TableHead>Title</TableHead>
                 <TableHead>Author</TableHead>
                 <TableHead>Library</TableHead>
+                <TableHead>Quantity</TableHead>
                 <TableHead>Borrow Date</TableHead>
                 <TableHead>Due Date</TableHead>
                 <TableHead>Status</TableHead>
@@ -112,6 +129,7 @@ export function CurrentBooksTab({ orders, setOrders }: CurrentBooksTabProps) {
                     <TableCell className="font-medium">{order.title}</TableCell>
                     <TableCell>{order.authorName}</TableCell>
                     <TableCell>{order.libraryName}</TableCell>
+                    <TableCell>{order.requestedCopiesQTY}</TableCell>
                     <TableCell>
                       {format(order.orderDate, "yyyy-MM-dd")}
                     </TableCell>

@@ -42,9 +42,22 @@ export interface UserOrder {
   title: string;
   authorName: string;
   libraryName: string;
+  requestedCopiesQTY: number;
   orderDate: Date;
   returnDate: Date;
   stateName: string;
+}
+
+export interface ReturnedUserOrder {
+  orderId: number;
+  title: string;
+  authorName: string;
+  libraryId: number | null;
+  libraryName: string;
+  requestedCopiesQTY: number;
+  orderDate: Date;
+  returnDate: Date;
+  stateName: string; // Will always be "Devolvido"
 }
 
 export interface BookDetailsDTO {

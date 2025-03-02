@@ -28,7 +28,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = (email: string, userId: string) => {
-    console.log("Logging in user:", email, userId); // Debug log
     const userData = { email, userId };
     localStorage.setItem("user", JSON.stringify(userData));
     setIsLoggedIn(true);

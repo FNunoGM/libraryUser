@@ -31,11 +31,21 @@ import {
 import { CalendarIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { format, parseISO } from "date-fns";
-import { mockBorrowingHistory, branches } from "./mockData";
-import { useState } from "react";
+import { LibraryByNumberOfCopies, ReturnedUserOrder } from "@/lib/types";
+import { useEffect, useState } from "react";
+import {
+  getReturnedOrdersByUserId,
+  getLibrariesByNumberOfCopies,
+} from "@/lib/api"; // Add getLibraries
+import { toast } from "react-toastify";
 
 export function BorrowingHistoryTab() {
-  const [selectedBranch, setSelectedBranch] = useState<string>("all");
+  const [selectedLibrary, setSelectedLibrary] = useState<string>("all");
+  const [allOrdersHistory, setAllOrdersHistory] = useState<ReturnedUserOrder[]>(
+    []
+  ); // Store all orders
+  const [filteredOrders, setFilteredOrders] = useState<ReturnedUserOrder[]>([]); // Store filtered orders
+  const [libraries, setLibraries] = useState<LibraryByNumberOfCopies[]>([]); // Store libraries
   const [dateRange, setDateRange] = useState<{
     from: Date | undefined;
     to: Date | undefined;
@@ -44,14 +54,55 @@ export function BorrowingHistoryTab() {
     to: undefined,
   });
 
-  const filteredHistory = mockBorrowingHistory.filter(book => {
-    const matchesBranch =
-      selectedBranch === "all" || book.branch === selectedBranch;
-    const borrowDate = parseISO(book.borrowDate);
-    const matchesDateFrom = !dateRange.from || borrowDate >= dateRange.from;
-    const matchesDateTo = !dateRange.to || borrowDate <= dateRange.to;
-    return matchesBranch && matchesDateFrom && matchesDateTo;
-  });
+  // Fetch orders history and libraries
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+    if (!user || !user.userId) return;
+
+    const loadData = async () => {
+      try {
+        // Fetch returned orders
+        const ordersData = await getReturnedOrdersByUserId(user.userId);
+        setAllOrdersHistory(ordersData); // Store all orders
+        setFilteredOrders(ordersData); // Initialize filtered orders with all orders
+
+        // Fetch libraries
+        const bookId = 1; // Replace with the appropriate bookId
+        const librariesData = await getLibrariesByNumberOfCopies(bookId);
+        setLibraries(librariesData);
+      } catch (error) {
+        toast.error("Failed to load data.");
+      }
+    };
+
+    loadData();
+    return () => {
+      setAllOrdersHistory([]);
+      setFilteredOrders([]);
+      setLibraries([]);
+    };
+  }, []);
+
+  // Apply filters whenever selectedLibrary or dateRange changes
+  useEffect(() => {
+    const filtered = allOrdersHistory.filter(order => {
+      const matchesLibrary =
+        selectedLibrary === "all" || order.libraryName === selectedLibrary;
+      const orderDate = new Date(order.orderDate);
+      const matchesDateFrom = !dateRange.from || orderDate >= dateRange.from;
+      const matchesDateTo = !dateRange.to || orderDate <= dateRange.to;
+      return matchesLibrary && matchesDateFrom && matchesDateTo;
+    });
+
+    setFilteredOrders(filtered); // Update filtered orders
+  }, [selectedLibrary, dateRange, allOrdersHistory]);
+
+  // Clear filters
+  const clearFilters = () => {
+    setSelectedLibrary("all");
+    setDateRange({ from: undefined, to: undefined });
+    setFilteredOrders(allOrdersHistory); // Reset filtered orders to all orders
+  };
 
   return (
     <Card>
@@ -64,16 +115,19 @@ export function BorrowingHistoryTab() {
       <CardContent>
         <div className="flex flex-col md:flex-row gap-4 mb-6">
           <div className="flex-1 bg-white">
-            <Label htmlFor="branch-filter">Filter by Branch</Label>
-            <Select value={selectedBranch} onValueChange={setSelectedBranch}>
+            <Label htmlFor="branch-filter">Filter by Library</Label>
+            <Select value={selectedLibrary} onValueChange={setSelectedLibrary}>
               <SelectTrigger id="branch-filter">
-                <SelectValue placeholder="Select branch" />
+                <SelectValue placeholder="Select Library" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Branches</SelectItem>
-                {branches.map(branch => (
-                  <SelectItem key={branch} value={branch}>
-                    {branch}
+                <SelectItem value="all">All Libraries</SelectItem>
+                {libraries.map(library => (
+                  <SelectItem
+                    key={library.libraryId}
+                    value={library.libraryName} // Use libraryName as the value
+                  >
+                    {library.libraryName}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -127,13 +181,7 @@ export function BorrowingHistoryTab() {
           </div>
 
           <div className="flex items-end">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setSelectedBranch("all");
-                setDateRange({ from: undefined, to: undefined });
-              }}
-            >
+            <Button variant="outline" onClick={clearFilters}>
               Clear Filters
             </Button>
           </div>
@@ -144,28 +192,33 @@ export function BorrowingHistoryTab() {
             <TableRow>
               <TableHead>Title</TableHead>
               <TableHead>Author</TableHead>
-              <TableHead>Branch</TableHead>
+              <TableHead>Library</TableHead>
+              <TableHead>Requested Copies</TableHead>
               <TableHead>Borrow Date</TableHead>
               <TableHead>Return Date</TableHead>
               <TableHead>Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredHistory.map(book => (
-              <TableRow key={`history-${book.id}-${book.borrowDate}`}>
-                <TableCell className="font-medium">{book.title}</TableCell>
-                <TableCell>{book.author}</TableCell>
-                <TableCell>{book.branch}</TableCell>
+            {filteredOrders.map(order => (
+              <TableRow key={`history-${order.orderId}`}>
+                <TableCell className="font-medium">{order.title}</TableCell>
+                <TableCell>{order.authorName}</TableCell>
+                <TableCell>{order.libraryName}</TableCell>
+                <TableCell>{order.requestedCopiesQTY}</TableCell>
                 <TableCell>
-                  {format(parseISO(book.borrowDate), "MMM d, yyyy")}
+                  {format(parseISO(order.orderDate.toString()), "MMM d, yyyy")}
                 </TableCell>
                 <TableCell>
-                  {book.returnDate
-                    ? format(parseISO(book.returnDate), "MMM d, yyyy")
+                  {order.returnDate
+                    ? format(
+                        parseISO(order.returnDate.toString()),
+                        "MMM d, yyyy"
+                      )
                     : "Not returned yet"}
                 </TableCell>
                 <TableCell>
-                  {book.returnDate ? (
+                  {order.returnDate ? (
                     <Badge variant="outline">Returned</Badge>
                   ) : (
                     <Badge>Active</Badge>
@@ -176,7 +229,7 @@ export function BorrowingHistoryTab() {
           </TableBody>
         </Table>
 
-        {filteredHistory.length === 0 && (
+        {filteredOrders.length === 0 && (
           <p className="text-center py-8 text-muted-foreground">
             No borrowing history found with the selected filters.
           </p>

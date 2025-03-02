@@ -13,28 +13,11 @@ import { UserOrder } from "@/lib/types";
 
 export default function AccountPage() {
   const { isLoggedIn } = useAuth();
-  const router = useRouter();
-  const [orders, setOrders] = useState<UserOrder[]>([]);
 
   useEffect(() => {
     if (!isLoggedIn) return;
     const user = JSON.parse(localStorage.getItem("user") || "null");
     if (!user || !user.userId) return;
-
-    const loadOrders = async () => {
-      try {
-        const data = await getUserOrders(user.userId);
-        console.log("Fetched Orders:", data);
-        setOrders(data);
-      } catch (error) {
-        toast.error("Failed to load books.");
-      }
-    };
-
-    loadOrders();
-    return () => {
-      setOrders([]);
-    };
   }, [isLoggedIn]);
 
   return (
@@ -49,7 +32,7 @@ export default function AccountPage() {
         </TabsList>
 
         <TabsContent value="current-books">
-          <CurrentBooksTab orders={orders} setOrders={setOrders} />
+          <CurrentBooksTab />
         </TabsContent>
 
         <TabsContent value="history">

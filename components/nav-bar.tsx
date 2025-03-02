@@ -14,12 +14,12 @@ export function NavBar() {
           <span className="text-lg font-bold">XPTO Library</span>
         </Link>
         <nav className="flex items-center space-x-6 text-sm font-medium ml-auto">
-          <Link
+          {/* <Link
             href="/explore"
             className="transition-colors hover:text-white/80 text-white"
           >
             Explore
-          </Link>
+          </Link> */}
           <Link
             href="/search"
             className="transition-colors hover:text-white/80 text-white"
