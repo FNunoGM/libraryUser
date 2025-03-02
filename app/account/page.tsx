@@ -13,6 +13,7 @@ import { UserOrder } from "@/lib/types";
 
 export default function AccountPage() {
   const { isLoggedIn } = useAuth();
+  const [orders, setOrders] = useState<UserOrder[]>([]);
 
   useEffect(() => {
     if (!isLoggedIn) return;
