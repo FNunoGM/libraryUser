@@ -22,19 +22,32 @@ import { AlertTriangle } from "lucide-react";
 import { mockBorrowedBooks } from "./mockData";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { userAgent } from "next/server";
+import { User, UserOrder } from "@/lib/types";
+import { deleteUser } from "@/lib/api";
+import { parse } from "path";
 
-export function SubscriptionTab() {
+interface SubscriptionTabProps {
+  orders: UserOrder[];
+}
+
+export function SubscriptionTab({ orders }: SubscriptionTabProps) {
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [returnConfirmed, setReturnConfirmed] = useState(false);
 
   const handleCancelSubscription = () => {
-    if (mockBorrowedBooks.length > 0 && !returnConfirmed) {
+    if (orders.length > 0 && !returnConfirmed) {
       toast.error(
         "You must return all borrowed books before canceling your subscription"
       );
       return;
     }
-
+    const user = localStorage.getItem("user");
+    if (user != null) {
+      const parsedUser = JSON.parse(user);
+      deleteUser(parsedUser.userId);
+    }
+    console.log(orders);
     toast.success("Your subscription has been canceled");
     setShowCancelDialog(false);
   };
@@ -99,11 +112,11 @@ export function SubscriptionTab() {
                 </DialogDescription>
               </DialogHeader>
 
-              {mockBorrowedBooks.length > 0 && (
+              {orders.length > 0 && (
                 <div className="border rounded-md p-4 bg-destructive/10 my-4 background-color:#fff">
                   <h4 className="font-medium flex items-center text-destructive">
                     <AlertTriangle className="h-4 w-4 mr-2" />
-                    You have {mockBorrowedBooks.length} books still borrowed
+                    You have {orders.length} books still borrowed
                   </h4>
                   <p className="text-sm mt-2">
                     You must return all borrowed books before canceling your
@@ -113,7 +126,7 @@ export function SubscriptionTab() {
                     <Checkbox
                       id="confirm-return"
                       checked={returnConfirmed}
-                      onCheckedChange={checked =>
+                      onCheckedChange={(checked) =>
                         setReturnConfirmed(checked as boolean)
                       }
                     />

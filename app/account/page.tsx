@@ -57,7 +57,7 @@ export default function AccountPage() {
         </TabsContent>
 
         <TabsContent value="subscription">
-          <SubscriptionTab />
+          <SubscriptionTab orders={orders} />
         </TabsContent>
       </Tabs>
     </div>
