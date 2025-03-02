@@ -61,37 +61,6 @@ export function SubscriptionTab({ orders }: SubscriptionTabProps) {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="subscription-type" className="text-right">
-              Subscription Type
-            </Label>
-            <div className="col-span-3">
-              <Input
-                id="subscription-type"
-                value="Premium Membership"
-                readOnly
-              />
-            </div>
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="renewal-date" className="text-right">
-              Next Renewal Date
-            </Label>
-            <div className="col-span-3">
-              <Input id="renewal-date" value="March 15, 2025" readOnly />
-            </div>
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="max-books" className="text-right">
-              Max Books Allowed
-            </Label>
-            <div className="col-span-3">
-              <Input id="max-books" value="10" readOnly />
-            </div>
-          </div>
-        </div>
-
         <div className="border rounded-lg p-4 bg-muted/50">
           <h3 className="font-medium mb-2">Cancel Subscription</h3>
           <p className="text-sm text-muted-foreground mb-4">
