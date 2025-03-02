@@ -14,6 +14,10 @@ export interface RequestBookDto {
   numberOfCopies: number;
 }
 
+export interface ReturnBook {
+  orderId: number;
+}
+
 export interface BookSearchResult {
   bookId: number;
   title: string;
@@ -32,6 +36,8 @@ export interface User {
 }
 
 export interface UserOrder {
+  userId(orderId: number, userId: any): void;
+  bookId(orderId: number, bookId: any): unknown;
   orderId: number;
   title: string;
   authorName: string;

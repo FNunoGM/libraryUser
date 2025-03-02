@@ -20,12 +20,14 @@ import { format, parseISO } from "date-fns";
 import { AlertTriangle, AlertCircle, Clock } from "lucide-react";
 import { toast } from "react-toastify";
 import { UserOrder } from "@/lib/types";
+import { returnBook } from "@/lib/api";
 
 interface CurrentBooksTabProps {
   orders: UserOrder[];
+  setOrders: React.Dispatch<React.SetStateAction<UserOrder[]>>; // Add this prop to update state
 }
 
-export function CurrentBooksTab({ orders }: CurrentBooksTabProps) {
+export function CurrentBooksTab({ orders, setOrders }: CurrentBooksTabProps) {
   const getReturnStatus = (dueDate: string) => {
     const today = new Date();
     const due = parseISO(dueDate);
@@ -54,6 +56,25 @@ export function CurrentBooksTab({ orders }: CurrentBooksTabProps) {
     }
   };
 
+  const handleReturnBook = async (orderId: number) => {
+    try {
+      const response = await returnBook(orderId); // Pass only the orderId
+
+      if (response?.data?.success === false) {
+        toast.error(response?.data?.message || `Failed to return book.`);
+      } else {
+        // Remove the returned book from the orders state
+        setOrders(prevOrders =>
+          prevOrders.filter(order => order.orderId !== orderId)
+        );
+
+        // You could also store this in the localStorage or update the backend if necessary
+        toast.success(response?.data?.message || `Book returned successfully.`);
+      }
+    } catch (error) {
+      toast.error(`Error returning book: ${error}`);
+    }
+  };
   return (
     <Card>
       <CardHeader>
@@ -110,11 +131,7 @@ export function CurrentBooksTab({ orders }: CurrentBooksTabProps) {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() =>
-                          toast.success(
-                            `Return process initiated for "${order.title}"`
-                          )
-                        }
+                        onClick={() => handleReturnBook(order.orderId)}
                       >
                         Return
                       </Button>
