@@ -51,6 +51,29 @@ export async function loginUser(
   }
 }
 
+export async function deleteUser(userId: number): Promise<ApiResponse<User>> {
+  try {
+    console.log(userId);
+    const response = await fetch(`${API_BASE_URL}/user/delete`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(userId),
+    });
+
+    if (!response.ok) throw new Error("Failed to delete user");
+    // Read the response as text first
+    const responseText = await response.text();
+    // If responseText is empty, default to an empty object
+    const data = responseText ? JSON.parse(responseText) : {};
+    console.log(data);
+    return data;
+    return data;
+  } catch (error: any) {
+    console.log("Error deleting user:", error);
+    throw error;
+  }
+}
+
 export async function requestBook(
   request: RequestBookDto
 ): Promise<ApiResponse<{ requestId: number }>> {

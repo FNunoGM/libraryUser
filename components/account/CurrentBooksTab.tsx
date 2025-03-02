@@ -28,6 +28,8 @@ export function CurrentBooksTab() {
   const getReturnStatus = (dueDate: string) => {
     const today = new Date();
     const due = parseISO(dueDate);
+    // const due = new Date(today);
+    // due.setDate(due.getDate() + 15);
     const daysLeft = differenceInDays(due, today);
 
     if (daysLeft < 0) {
@@ -120,9 +122,11 @@ export function CurrentBooksTab() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {orders.map(order => {
+              {orders.map((order) => {
+                const returnDate = new Date(order.orderDate);
+                returnDate.setDate(returnDate.getDate() + 15);
                 const status = getReturnStatus(
-                  format(order.returnDate, "yyyy-MM-dd")
+                  format(returnDate.toString(), "yyyy-MM-dd")
                 );
                 return (
                   <TableRow key={order.orderId}>
@@ -134,7 +138,8 @@ export function CurrentBooksTab() {
                       {format(order.orderDate, "yyyy-MM-dd")}
                     </TableCell>
                     <TableCell>
-                      {format(order.returnDate, "yyyy-MM-dd")}
+                      {/* {format(order.orderDate, "yyyy-MM-dd")} */}
+                      {format(returnDate.toString(), "yyyy-MM-dd")}
                     </TableCell>
                     <TableCell>
                       <Badge
