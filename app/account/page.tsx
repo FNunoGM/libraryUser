@@ -32,6 +32,9 @@ export default function AccountPage() {
     };
 
     loadOrders();
+    return () => {
+      setOrders([]);
+    };
   }, [isLoggedIn]);
 
   return (
@@ -46,7 +49,7 @@ export default function AccountPage() {
         </TabsList>
 
         <TabsContent value="current-books">
-          <CurrentBooksTab orders={orders} />
+          <CurrentBooksTab orders={orders} setOrders={setOrders} />
         </TabsContent>
 
         <TabsContent value="history">

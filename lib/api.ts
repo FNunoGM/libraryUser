@@ -6,6 +6,7 @@ import {
   User,
   UserOrder,
   LibraryByNumberOfCopies,
+  ReturnBook,
 } from "@/lib/types";
 
 const API_BASE_URL = "http://localhost:5000/api"; // URL da API
@@ -151,6 +152,28 @@ export async function getLibrariesByNumberOfCopies(
     return data;
   } catch (error: any) {
     console.error("Error fetching libraries by number of copies:", error);
+    throw new Error(error.message || "An unexpected error occurred.");
+  }
+}
+
+export async function returnBook(
+  orderId: number
+): Promise<ApiResponse<{ success: boolean; message: string }>> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/Books/return/${orderId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orderId }),
+    });
+
+    const data: ApiResponse<{ success: boolean; message: string }> =
+      await response.json();
+
+    if (!response.ok) throw new Error(data.error || "Failed to return book.");
+
+    return data;
+  } catch (error: any) {
+    console.error("Error returning book:", error);
     throw new Error(error.message || "An unexpected error occurred.");
   }
 }
