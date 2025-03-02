@@ -1,7 +1,9 @@
 "use client";
 
+import { redirect } from "next/dist/server/api-utils";
 import type React from "react";
 import { createContext, useState, useContext, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 type AuthContextType = {
   isLoggedIn: boolean;
@@ -17,6 +19,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<{ email: string; userId: string } | null>(
     null
   );
+  const router = useRouter();
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -39,6 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem("user");
     setIsLoggedIn(false);
     setUser(null);
+    router.push("/");
   };
 
   return (

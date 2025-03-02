@@ -18,7 +18,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, LogOut } from "lucide-react";
 import { mockBorrowedBooks } from "./mockData";
 import { useState } from "react";
 import { toast } from "react-toastify";
@@ -26,6 +26,8 @@ import { userAgent } from "next/server";
 import { User, UserOrder } from "@/lib/types";
 import { deleteUser } from "@/lib/api";
 import { parse } from "path";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { useRouter } from "next/navigation";
 
 interface SubscriptionTabProps {
   orders: UserOrder[];
@@ -34,6 +36,7 @@ interface SubscriptionTabProps {
 export function SubscriptionTab({ orders }: SubscriptionTabProps) {
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [returnConfirmed, setReturnConfirmed] = useState(false);
+  const router = useRouter();
 
   const handleCancelSubscription = () => {
     if (orders.length > 0 && !returnConfirmed) {
@@ -49,6 +52,7 @@ export function SubscriptionTab({ orders }: SubscriptionTabProps) {
     }
     console.log(orders);
     toast.success("Your subscription has been canceled");
+    router.push("/");
     setShowCancelDialog(false);
   };
 
