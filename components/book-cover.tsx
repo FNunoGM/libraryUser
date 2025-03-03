@@ -16,7 +16,7 @@ export function BookCover({
   return (
     <div className="relative w-full" style={{ aspectRatio: "2/3" }}>
       <Image
-        src={`data:image/jpeg;base64,${src}` || "/placeholder.svg"}
+        src={src != null ? `data:image/jpg;base64,${src}` : "/placeholder.svg"}
         alt={alt}
         fill
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
