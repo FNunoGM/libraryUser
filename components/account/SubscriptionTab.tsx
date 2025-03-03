@@ -20,24 +20,47 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { AlertTriangle, LogOut } from "lucide-react";
 import { mockBorrowedBooks } from "./mockData";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { userAgent } from "next/server";
 import { User, UserOrder } from "@/lib/types";
-import { deleteUser } from "@/lib/api";
+import { deleteUser, getUserOrders } from "@/lib/api";
 import { parse } from "path";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useRouter } from "next/navigation";
+import { AuthProvider, useAuth } from "../auth-context";
 
 interface SubscriptionTabProps {
   orders: UserOrder[];
 }
 
-export function SubscriptionTab({ orders }: SubscriptionTabProps) {
+export function SubscriptionTab() {
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [returnConfirmed, setReturnConfirmed] = useState(false);
+  const [orders, setOrders] = useState<UserOrder[]>([]);
   const router = useRouter();
+  const { logout } = useAuth();
 
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+    if (!user || !user.userId) return;
+
+    const loadOrders = async () => {
+      try {
+        const data = await getUserOrders(user.userId);
+        setOrders(data);
+      } catch (error) {
+        toast.error("Failed to load books.");
+      }
+    };
+
+    loadOrders();
+    return () => {
+      setOrders([]);
+    };
+  }, []);
+
+  console.log(orders);
   const handleCancelSubscription = () => {
     if (orders.length > 0 && !returnConfirmed) {
       toast.error(
@@ -52,6 +75,8 @@ export function SubscriptionTab({ orders }: SubscriptionTabProps) {
     }
     console.log(orders);
     toast.success("Your subscription has been canceled");
+    logout();
+    localStorage.clear();
     router.push("/");
     setShowCancelDialog(false);
   };
