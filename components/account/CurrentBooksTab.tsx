@@ -76,7 +76,7 @@ export function CurrentBooksTab() {
 
   const handleReturnBook = async (orderId: number) => {
     try {
-      const response = await returnBook(orderId); // Pass only the orderId
+      const response = await returnBook(orderId);
 
       if (response?.data?.success === false) {
         toast.error(response?.data?.message || `Failed to return book.`);
@@ -122,7 +122,7 @@ export function CurrentBooksTab() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {orders.map((order) => {
+              {orders.map(order => {
                 const returnDate = new Date(order.orderDate);
                 returnDate.setDate(returnDate.getDate() + 15);
                 const status = getReturnStatus(
