@@ -36,7 +36,7 @@ import { useEffect, useState } from "react";
 import {
   getReturnedOrdersByUserId,
   getLibrariesByNumberOfCopies,
-} from "@/lib/api"; // Add getLibraries
+} from "@/lib/api";
 import { toast } from "react-toastify";
 
 export function BorrowingHistoryTab() {
