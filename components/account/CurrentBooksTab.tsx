@@ -32,6 +32,7 @@ export function CurrentBooksTab() {
     // due.setDate(due.getDate() + 15);
     const daysLeft = differenceInDays(due, today);
 
+    console.log(orders);
     if (daysLeft < 0) {
       return {
         status: "LATE",
@@ -82,8 +83,8 @@ export function CurrentBooksTab() {
         toast.error(response?.data?.message || `Failed to return book.`);
       } else {
         // Remove the returned book from the orders state
-        setOrders(prevOrders =>
-          prevOrders.filter(order => order.orderId !== orderId)
+        setOrders((prevOrders) =>
+          prevOrders.filter((order) => order.orderId !== orderId)
         );
 
         // You could also store this in the localStorage or update the backend if necessary
@@ -122,7 +123,7 @@ export function CurrentBooksTab() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {orders.map(order => {
+              {orders.map((order) => {
                 const returnDate = new Date(order.orderDate);
                 returnDate.setDate(returnDate.getDate() + 15);
                 const status = getReturnStatus(
