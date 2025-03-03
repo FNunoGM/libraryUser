@@ -63,8 +63,8 @@ export function BorrowingHistoryTab() {
       try {
         // Fetch returned orders
         const ordersData = await getReturnedOrdersByUserId(user.userId);
-        setAllOrdersHistory(ordersData); // Store all orders
-        setFilteredOrders(ordersData); // Initialize filtered orders with all orders
+        setAllOrdersHistory(ordersData);
+        setFilteredOrders(ordersData);
 
         // Fetch libraries
         const bookId = 1; // Replace with the appropriate bookId
