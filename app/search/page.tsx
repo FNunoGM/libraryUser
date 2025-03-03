@@ -29,7 +29,6 @@ export default function SearchPage() {
   const [books, setBooks] = useState<BookSearchResult[]>([]);
   const [filteredBooks, setFilteredBooks] = useState<BookSearchResult[]>([]);
 
-  // Extract unique subjects from all books
   const subjects = Array.from(
     new Set(books.flatMap(book => book.subjectNames))
   );
