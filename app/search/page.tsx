@@ -25,7 +25,7 @@ import { fetchBookSearch } from "@/lib/api";
 
 export default function SearchPage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedSubject, setSelectedSubject] = useState("");
+  const [selectedSubject, setSelectedSubject] = useState("all");
   const [books, setBooks] = useState<BookSearchResult[]>([]);
   const [filteredBooks, setFilteredBooks] = useState<BookSearchResult[]>([]);
 
