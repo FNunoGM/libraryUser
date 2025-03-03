@@ -41,11 +41,9 @@ export default function BookPage() {
           throw new Error("Invalid book ID.");
         }
 
-        // Fetch book details
         const bookDetails = await getBookById(bookId);
         setBook(bookDetails);
 
-        // Fetch libraries with available copies
         const librariesData = await getLibrariesByNumberOfCopies(bookId);
         setLibraries(librariesData);
       } catch (error) {
@@ -103,7 +101,6 @@ export default function BookPage() {
       return;
     }
 
-    // Retrieve userId from localStorage
     const userData = localStorage.getItem("user");
     if (!userData) {
       toast.error("User data not found. Please log in again.");
@@ -112,7 +109,7 @@ export default function BookPage() {
 
     try {
       const user = JSON.parse(userData);
-      const userId = user.userId; // Access userId from the parsed object
+      const userId = user.userId;
       if (!userId) {
         toast.error("User ID not found. Please log in again.");
         return;
@@ -124,15 +121,13 @@ export default function BookPage() {
         return;
       }
 
-      // Prepare the request payload
       const request: RequestBookDto = {
-        userId: parsedUserId, // Use the parsed userId
-        bookId: parseInt(book.bookId.toString(), 10), // Convert book ID to number
-        libraryId: parseInt(selectedLibrary, 10), // Convert library ID to number
+        userId: parsedUserId,
+        bookId: parseInt(book.bookId.toString(), 10),
+        libraryId: parseInt(selectedLibrary, 10),
         numberOfCopies: quantity,
       };
 
-      // Call the backend API
       const response = await requestBook(request);
 
       if (!response.ok) {
