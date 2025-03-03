@@ -26,7 +26,7 @@ export const mockBorrowedBooks = [
     author: "J.D. Salinger",
     branch: "East Side Branch",
     borrowDate: "2025-02-10",
-    dueDate: addDays(new Date(), 5).toISOString().split("T")[0], // Due in 5 days
+    dueDate: addDays(new Date(), 5).toISOString().split("T")[0],
     coverImage: "https://covers.openlibrary.org/b/id/8231432-L.jpg",
   },
 ];
