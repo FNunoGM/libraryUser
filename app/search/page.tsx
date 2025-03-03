@@ -31,7 +31,7 @@ export default function SearchPage() {
 
   // Extract unique subjects from all books
   const subjects = Array.from(
-    new Set(books.flatMap((book) => book.subjectNames))
+    new Set(books.flatMap(book => book.subjectNames))
   );
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export default function SearchPage() {
       try {
         const data = await fetchBookSearch();
         setBooks(data);
-        setFilteredBooks(data); // Initialize filtered books with all books
+        setFilteredBooks(data);
       } catch (error) {
         toast.error("Failed to load books.");
       }
@@ -50,7 +50,7 @@ export default function SearchPage() {
 
   const handleSearch = () => {
     const results = books.filter(
-      (book) =>
+      book =>
         (book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
           book.authorName.toLowerCase().includes(searchQuery.toLowerCase())) &&
         (selectedSubject === "all" ||
@@ -67,7 +67,7 @@ export default function SearchPage() {
           <Input
             placeholder="Search by title or author..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={e => setSearchQuery(e.target.value)}
             className="flex-1"
           />
           <Select value={selectedSubject} onValueChange={setSelectedSubject}>
@@ -78,7 +78,7 @@ export default function SearchPage() {
               <SelectItem value="all" defaultValue={"all"}>
                 All Subjects
               </SelectItem>
-              {subjects.map((subject) => (
+              {subjects.map(subject => (
                 <SelectItem key={subject} value={subject}>
                   {subject}
                 </SelectItem>
@@ -93,7 +93,7 @@ export default function SearchPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {filteredBooks.map((book) => (
+        {filteredBooks.map(book => (
           <Card key={book.bookId}>
             <CardHeader>
               <div className="w-full aspect-[2/3] mb-4">
