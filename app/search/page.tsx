@@ -75,7 +75,7 @@ export default function SearchPage() {
               <SelectValue placeholder="All Subjects" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all" defaultChecked>
+              <SelectItem value="all" defaultValue={"all"}>
                 All Subjects
               </SelectItem>
               {subjects.map((subject) => (
