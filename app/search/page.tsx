@@ -72,7 +72,7 @@ export default function SearchPage() {
           />
           <Select value={selectedSubject} onValueChange={setSelectedSubject}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Subject" />
+              <SelectValue placeholder="All Subjects" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Subjects</SelectItem>
