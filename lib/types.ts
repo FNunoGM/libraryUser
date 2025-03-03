@@ -24,7 +24,7 @@ export interface BookSearchResult {
   quantity: number;
   authorId: number;
   authorName: string;
-  coverImage?: string; // Assuming the cover image is a URL or base64 string
+  coverImage?: string;
   subjectNames: string[];
 }
 
@@ -32,7 +32,7 @@ export interface User {
   id?: number;
   name: string;
   email: string;
-  password?: string; // Exclude when fetching user data
+  password?: string;
 }
 
 export interface UserOrder {
@@ -57,7 +57,7 @@ export interface ReturnedUserOrder {
   requestedCopiesQTY: number;
   orderDate: Date;
   returnDate: Date;
-  stateName: string; // Will always be "Devolvido"
+  stateName: string;
 }
 
 export interface BookDetailsDTO {
