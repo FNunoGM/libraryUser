@@ -10,8 +10,8 @@ import {
   ReturnedUserOrder,
 } from "@/lib/types";
 
-//const API_BASE_URL = "http://localhost:5000/api"; // URL da API
-const API_BASE_URL = "https://libproject-api.onrender.com/api";
+const API_BASE_URL = "http://localhost:5000/api"; // URL da API
+// const API_BASE_URL = "https://libproject-api.onrender.com/api";
 
 export async function registerUser(userData: User): Promise<ApiResponse<User>> {
   try {
@@ -57,7 +57,10 @@ export async function deleteUser(userId: number): Promise<ApiResponse<User>> {
     console.log(userId);
     const response = await fetch(`${API_BASE_URL}/user/delete`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Credentials": "true",
+      },
       body: JSON.stringify(userId),
     });
 
@@ -67,7 +70,6 @@ export async function deleteUser(userId: number): Promise<ApiResponse<User>> {
     // If responseText is empty, default to an empty object
     const data = responseText ? JSON.parse(responseText) : {};
     console.log(data);
-    return data;
     return data;
   } catch (error: any) {
     console.log("Error deleting user:", error);
