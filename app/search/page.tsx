@@ -35,7 +35,6 @@ export default function SearchPage() {
   );
 
   useEffect(() => {
-    // Fetch books when the component mounts
     const loadBooks = async () => {
       try {
         const data = await fetchBookSearch();
