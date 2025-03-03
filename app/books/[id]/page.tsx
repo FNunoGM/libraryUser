@@ -175,7 +175,6 @@ export default function BookPage() {
             </div>
           </div>
 
-          {/* Request Section */}
           <div className="space-y-4">
             <div className="flex items-center gap-2 justify-self-center">
               <Button variant="outline" size="sm" onClick={handleDecrement}>
