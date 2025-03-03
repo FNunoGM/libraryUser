@@ -10,8 +10,8 @@ import {
   ReturnedUserOrder,
 } from "@/lib/types";
 
-const API_BASE_URL = "http://localhost:5000/api"; // URL da API
-// const API_BASE_URL = "https://libproject-api.onrender.com/api";
+//const API_BASE_URL = "http://localhost:5000/api"; // URL da API
+const API_BASE_URL = "https://libproject-api.onrender.com/api";
 
 export async function registerUser(userData: User): Promise<ApiResponse<User>> {
   try {
