@@ -24,7 +24,7 @@ export interface BookSearchResult {
   quantity: number;
   authorId: number;
   authorName: string;
-  coverImage: string; // Assuming the cover image is a URL or base64 string
+  coverImage?: string; // Assuming the cover image is a URL or base64 string
   subjectNames: string[];
 }
 
