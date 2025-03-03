@@ -44,8 +44,8 @@ export function BorrowingHistoryTab() {
   const [allOrdersHistory, setAllOrdersHistory] = useState<ReturnedUserOrder[]>(
     []
   ); // Store all orders
-  const [filteredOrders, setFilteredOrders] = useState<ReturnedUserOrder[]>([]); // Store filtered orders
-  const [libraries, setLibraries] = useState<LibraryByNumberOfCopies[]>([]); // Store libraries
+  const [filteredOrders, setFilteredOrders] = useState<ReturnedUserOrder[]>([]);
+  const [libraries, setLibraries] = useState<LibraryByNumberOfCopies[]>([]);
   const [dateRange, setDateRange] = useState<{
     from: Date | undefined;
     to: Date | undefined;
