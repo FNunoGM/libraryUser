@@ -10,8 +10,8 @@ import {
   ReturnedUserOrder,
 } from "@/lib/types";
 
-const API_BASE_URL = "http://localhost:5000/api"; // URL da API
-// const API_BASE_URL = "https://libproject-api.onrender.com/api";
+// const API_BASE_URL = "http://localhost:5000/api"; // URL da API
+const API_BASE_URL = "https://libproject-api.onrender.com/api";
 
 export async function registerUser(userData: User): Promise<ApiResponse<User>> {
   try {
@@ -59,9 +59,9 @@ export async function deleteUser(userId: number): Promise<ApiResponse<User>> {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Credentials": "*",
       },
-      body: JSON.stringify(userId),
+      body: JSON.stringify({ userId: userId }),
     });
 
     if (!response.ok) throw new Error("Failed to delete user");
