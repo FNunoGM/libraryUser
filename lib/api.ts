@@ -59,9 +59,8 @@ export async function deleteUser(userId: number): Promise<ApiResponse<User>> {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Access-Control-Allow-Credentials": "*",
       },
-      body: JSON.stringify({ userId: userId }),
+      body: JSON.stringify({ UserId: userId }),
     });
 
     if (!response.ok) throw new Error("Failed to delete user");
