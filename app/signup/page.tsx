@@ -37,33 +37,31 @@ export default function SignUpPage() {
     setIsLoading(true);
 
     try {
-      registerUser(formData);
+      const response = await registerUser(formData);
 
       // try {
       //   const response = await fetch("http://localhost:5000/api/user/register", {
       //     method: "POST",
       //     headers: { "Content-Type": "application/json" },
       //     body: JSON.stringify(formData),
-      //   });
+      //   })
 
-      //   const data = await response.json();
+      const data = await response.json();
 
-      //   if (response.ok) {
-      //     toast.success("Account created successfully!");
-      //     setFormData({
-      //       firstName: "",
-      //       lastName: "",
-      //       birthDate: "",
-      //       address: "",
-      //       email: "",
-      //       password: "",
-      //     });
-      //     router.push("/login");
-      //   } else if (response.status === 409) {
-      //     toast.error("Email already exists.");
-      //   } else {
-      //     toast.error(data.error || "Failed to create account.");
-      //   }
+      if (response.ok) {
+        toast.success("Account created successfully!");
+        setFormData({
+          firstName: "",
+          lastName: "",
+          birthDate: "",
+          address: "",
+          email: "",
+          password: "",
+        });
+        router.push("/login");
+      } else {
+        toast.error("Failed to create account.");
+      }
     } catch (error) {
       toast.error("Something went wrong. Please try again later.");
     } finally {
