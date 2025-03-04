@@ -10,8 +10,6 @@ import {
   ReturnedUserOrder,
 } from "@/lib/types";
 
-//Testing Production API
-
 // const API_BASE_URL = "http://localhost:5000/api"; // URL da API
 const API_BASE_URL = "https://libproject-api.onrender.com/api";
 
