@@ -46,7 +46,7 @@ export default function SignUpPage() {
       //     body: JSON.stringify(formData),
       //   })
 
-      const data = await response.json();
+      //   const data = await response.json();
 
       if (response.ok) {
         toast.success("Account created successfully!");
