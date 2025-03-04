@@ -32,18 +32,27 @@ export default function SignUpPage() {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
+  const router = useRouter(); // Move this outside handleSubmit
+
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setIsLoading(true);
 
-    const router = useRouter();
-
     try {
       var res = await registerUser(formData);
+
+      // Ensure registration was successful before navigating
+      if (!res || res.error) {
+        throw new Error(res?.error || "Registration failed");
+      }
+
       toast.success("Account created successfully!");
       router.push("/login");
     } catch (error) {
-      toast.error("Something went wrong. Please try again later.");
+      toast.error(
+        (error as Error).message ||
+          "Something went wrong. Please try again later."
+      );
     } finally {
       setIsLoading(false);
     }
