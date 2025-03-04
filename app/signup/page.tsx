@@ -40,6 +40,9 @@ export default function SignUpPage() {
       const response = await registerUser(formData);
       toast.success("Registration successful!");
       router.push("/login");
+      if (response.ok) {
+        console.log("Registration successful!");
+      }
 
       // try {
       //   const response = await fetch("http://localhost:5000/api/user/register", {
