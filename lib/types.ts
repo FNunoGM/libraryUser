@@ -66,7 +66,7 @@ export interface BookDetailsDTO {
   title: string;
   edition: string;
   year: number;
-  coverImage: string;
+  coverImage?: string;
   authorName: string;
   subjectNames: string[];
 }

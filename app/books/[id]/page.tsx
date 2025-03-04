@@ -145,7 +145,7 @@ export default function BookPage() {
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="flex justify-center lg:justify-end">
           <Card className="w-full max-w-md overflow-hidden">
-            <BookCover src={book.coverImage} alt={book.title} />
+            <BookCover src={book.coverImage ?? ""} alt={book.title} />
           </Card>
         </div>
         <div className="flex flex-col justify-center">
