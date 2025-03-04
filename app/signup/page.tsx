@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { toast } from "react-toastify";
-import router from "next/router";
+import { useRouter } from "next/navigation";
 import { registerUser } from "@/lib/api";
 
 export default function SignUpPage() {
@@ -36,22 +36,12 @@ export default function SignUpPage() {
     e.preventDefault();
     setIsLoading(true);
 
+    const router = useRouter();
+
     try {
-      const response = await registerUser(formData);
-      toast.success("Registration successful!");
+      var res = await registerUser(formData);
+      toast.success("Account created successfully!");
       router.push("/login");
-      if (response.ok) {
-        console.log("Registration successful!");
-      }
-
-      // try {
-      //   const response = await fetch("http://localhost:5000/api/user/register", {
-      //     method: "POST",
-      //     headers: { "Content-Type": "application/json" },
-      //     body: JSON.stringify(formData),
-      //   })
-
-      //   const data = await response.json();
     } catch (error) {
       toast.error("Something went wrong. Please try again later.");
     } finally {
