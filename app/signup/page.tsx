@@ -38,6 +38,8 @@ export default function SignUpPage() {
 
     try {
       const response = await registerUser(formData);
+      toast.success("Registration successful!");
+      router.push("/login");
 
       // try {
       //   const response = await fetch("http://localhost:5000/api/user/register", {
@@ -47,21 +49,6 @@ export default function SignUpPage() {
       //   })
 
       //   const data = await response.json();
-
-      if (response.ok) {
-        toast.success("Account created successfully!");
-        setFormData({
-          firstName: "",
-          lastName: "",
-          birthDate: "",
-          address: "",
-          email: "",
-          password: "",
-        });
-        router.push("/login");
-      } else {
-        toast.error("Failed to create account.");
-      }
     } catch (error) {
       toast.error("Something went wrong. Please try again later.");
     } finally {
